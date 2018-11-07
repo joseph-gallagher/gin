@@ -90,7 +90,7 @@ print(sess.run([a, b]))
 sess.run(a.initializer)
 print(sess.run([a, b]))
 
-
+# What is the result of
 
 
 

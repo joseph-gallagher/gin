@@ -421,7 +421,7 @@ class NNPlayer(Player):
                 # See what it would be like if you discarded it:
                 state[card] = -0.5
                 one_hot = self.flatten(state)
-                evaluation = self.graph.evaluate(one_hot)
+                evaluation = self.graph.evaluate([one_hot])
                 if evaluation == inf:
                     raise ValueError('The neural-net is returning infinite values (in discard_strategy)')
                 if evaluation < best_w_disc:
@@ -455,11 +455,44 @@ class NNPlayer(Player):
         cur_hand = self.hand[:]
         drawable = [k for k in state if state[k] == 0]
 
-        # Dict with keys : value pairs drawable card : (best resulting discard, evaluation of play)
+        # Dict with key : value pairs drawable card : (best resulting discard, evaluation of play)
         strats_and_evals = {}
 
         if self.is_player_1:
 
+            # An alternate attempt to avoid multiple calls to sess.run()
+            a = []
+            d = {}
+            index = 0
+            for draw in drawable:
+                # It is now in your hand
+                state[draw] = -1
+                cur_hand.append(draw)
+                d[draw] = {}
+                for discard in cur_hand:
+                    # And the discard has been removed
+                    state[discard] = -0.5
+                    one_hot = self.flatten(state)
+                    a.append(one_hot)
+                    d[draw][discard] = index
+                    index = index + 1
+                    # Replace the discard for the next loop
+                    state[discard] = -1
+                # Replace the drawn card for the next loop
+                cur_hand.remove(draw)
+                state[draw] = 0
+
+            # Just one call to self.sess.run()
+            a = np.array(a)
+            evaluation = self.graph.evaluate(a)
+
+            # Fill in strats_and_evals by looping again through possibilities:
+            for card in d:
+                plays_and_evals = [(discard, evaluation[d[card][discard]]) for discard in d[card]]
+                (best_discard, eval_of_play) = max(plays_and_evals, key=lambda x: x[1])
+                strats_and_evals[card] = (best_discard, eval_of_play)
+
+            '''
             for card in drawable:
                 state[card] = -1
                 cur_hand.append(card)
@@ -478,9 +511,42 @@ class NNPlayer(Player):
                 cur_hand.remove(card)
                 if best_discard is None:
                     raise ValueError('Somehow, we never accepted a discard in strats_and_evals()')
+            '''
 
         else:
 
+            # An alternate attempt to avoid multiple calls to sess.run()
+            a = []
+            d = {}
+            index = 0
+            for draw in drawable:
+                # It is now in your hand
+                state[draw] = 1
+                cur_hand.append(draw)
+                d[draw] = {}
+                for discard in cur_hand:
+                    # And the discard has been removed
+                    state[discard] = 0.5
+                    one_hot = self.flatten(state)
+                    a.append(one_hot)
+                    d[draw][discard] = index
+                    index = index + 1
+                    # Replace the discard for the next loop
+                    state[discard] = 1
+                # Replace the drawn card for the next loop
+                cur_hand.remove(draw)
+                state[draw] = 0
+
+            # Just one call to self.sess.run()
+            evaluation = self.graph.evaluate(a)
+
+            # Fill in strats_and_evals by looping again through possibilities:
+            for card in d:
+                plays_and_evals = [(discard, evaluation[d[card][discard]]) for discard in d[card]]
+                (best_discard, eval_of_play) = max(plays_and_evals, key=lambda x: x[1])
+                strats_and_evals[card] = (best_discard, eval_of_play)
+
+            '''
             for card in drawable:
                 state[card] = 1
                 cur_hand.append(card)
@@ -495,7 +561,7 @@ class NNPlayer(Player):
                 strats_and_evals[card] = (best_discard, best_evaluation)
                 state[card] = 0
                 cur_hand.remove(card)
-
+            '''
         return strats_and_evals
 
     # !Large issue right now: we are giving this player information he should not have!!
@@ -508,7 +574,7 @@ class NNPlayer(Player):
         # modify it freely.
 
         one_hot = self.flatten(deck.game_state)
-        best_now = self.graph.evaluate(one_hot, training=self.training)
+        best_now = self.graph.evaluate([one_hot], training=self.training)
 
         [best_w_disc, to_discard_w_disc] = self.discard_strategy(deck)
         strats_and_evals = self.draw_strategies(deck)
@@ -720,16 +786,19 @@ print(player_1.graph.path)
 def time_check(n):
 
     t_1 = time()
+    player_1 = NNPlayer()
+    player_2 = NNPlayer()
     for i in range(n):
         deck = Deck()
-        player_1 = NNPlayer()
-        player_2 = NNPlayer()
         game = Game(deck, player_1, player_2)
+        game.play_game()
     t_2 = time()
     print('Took ' + str(t_2-t_1))
 
 time_check(5)
 time_check(10)
 # time_check(50)
+
 '''
+
 

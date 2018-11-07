@@ -10,11 +10,16 @@ player_1_path = os.path.join(player_1_path, hero)
 
 player_1 = NNPlayer(training=True)
 
-for i in range(5):
+NUM_GAMES = 50
+LEARN_EVERY = 10
+
+for i in range(NUM_GAMES):
     deck = Deck()
     player_2 = Greedy_Player()
     karate = TrainingGame(deck, player_1, player_2)
     karate.play_game()
+    if i > 0 and i % LEARN_EVERY == 0:
+        player_1.graph.learn()
 
     # Re-initialize all of player_1's non-graph fields:
     player_1.hand = []

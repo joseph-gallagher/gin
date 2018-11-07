@@ -10,10 +10,13 @@ from time import time
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
+
 def powerset(iterable):
+
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     s = list(iterable)
     return itertools.chain.from_iterable(itertools.combinations(s, r) for r in range(len(s)+1))
+
 
 def value(card):
     if card[0] < 10:
@@ -416,6 +419,26 @@ class NNPlayer(Player):
 
             state[top_discard] = -1
             cur_hand.append(top_discard)
+
+            # An alternate way of doing this to minimize calls to Session.run()
+            a = []
+            d = {}
+            index = 0
+            for discard in cur_hand:
+                state[discard] = -0.5
+                one_hot = self.flatten(state)
+                a.append(one_hot)
+                d[discard] = index
+                index = index + 1
+                # Put the discard back for the next round.
+                state[discard] = -1
+
+            a = np.array(a)
+            evaluation = self.graph.evaluate(a)
+
+            (best_w_disc, to_discard_w_disc) = max([(evaluation[d[discard]], discard) for discard in d],
+                                                   key=lambda x : x[0])
+            '''    
             for card in cur_hand:
 
                 # See what it would be like if you discarded it:
@@ -429,11 +452,32 @@ class NNPlayer(Player):
 
                 # Put it back for the next loop
                 state[card] = -1
-
+            '''
         else:
 
             state[top_discard] = 1
             cur_hand.append(top_discard)
+
+            # An alternate way of doing this to minimize calls to Session.run()
+            a = []
+            d = {}
+            index = 0
+            for discard in cur_hand:
+                state[discard] = -0.5
+                one_hot = self.flatten(state)
+                a.append(one_hot)
+                d[discard] = index
+                index = index + 1
+                # Put the discard back for the next round.
+                state[discard] = -1
+
+            a = np.array(a)
+            evaluation = self.graph.evaluate(a)
+
+            (best_w_disc, to_discard_w_disc) = max([(evaluation[d[discard]], discard) for discard in d],
+                                                   key=lambda x: x[0])
+
+            '''
             for card in cur_hand:
 
                 # See what it would be like if you discarded it:
@@ -445,6 +489,7 @@ class NNPlayer(Player):
 
                 # Put it back for the next loop
                 state[card] = 1
+            '''
         if to_discard_w_disc is None:
             raise ValueError('Somehow, we never accepted a discard in discard_strategy()')
         return [best_w_disc, to_discard_w_disc]

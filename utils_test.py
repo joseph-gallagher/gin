@@ -1,5 +1,6 @@
 import unittest
 from utils import *
+from players import *
 
 
 class DeadwoodTest(unittest.TestCase):
@@ -89,6 +90,33 @@ class LayoffTest(unittest.TestCase):
     def test_intersect(self):
         melded_hand = [[(1, 'H'), (2, 'H'), (3, 'H')], [(4, 'C'), (4, 'D'), (4, 'S')]]
         self.assertEqual(set([(4, 'H')]), set(layoffable(melded_hand)))
+
+
+class DealTest(unittest.TestCase):
+
+    def setUp(self):
+        self.deck = Deck()
+        self.player_1 = Player()
+        self.player_2 = Player()
+
+    def test_hand_sizes(self):
+        self.deck.deal(self.player_1, self.player_2)
+        (a, b) = (len(self.player_1.hand), len(self.player_2.hand))
+        self.assertTupleEqual((10, 10), (a, b))
+
+    def test_remaining_sizes(self):
+        self.deck.deal(self.player_1, self.player_2)
+        self.assertEqual(31, len(self.deck.deck_order))
+
+    def test_correct_states(self):
+        self.deck.deal(self.player_1, self.player_2)
+        for card in self.player_1.hand:
+            self.assertEqual(-1, self.deck.game_state[card])
+        for card in self.player_2.hand:
+            self.assertEqual(1, self.deck.game_state[card])
+        for card in self.deck.deck_order:
+            self.assertEqual(0, self.deck.game_state[card])
+        self.assertEqual(0.5, self.deck.game_state[self.deck.top_discard])
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ This code creates the TensorFlow code that generates the graph of a simple_nn pl
 
 class SimpleGraph(object):
 
-    def __init__(self, path=None, hidden_units=30, alpha=0.01, gamma=0.7):
+    def __init__(self, path=None, hidden_units=40, alpha=0.01, gamma=0.7):
 
         self.graph = tf.Graph()
         self.sess = tf.Session(graph=self.graph)
@@ -23,6 +23,9 @@ class SimpleGraph(object):
                 self.w1 = tf.Variable(1/52*np.random.randn(52, hidden_units), dtype=tf.float32)
                 self.hidden = tf.sigmoid(tf.matmul(self.state, self.w1))
                 self.w2 = tf.Variable(np.random.randn(hidden_units, 1), dtype=tf.float32)
+
+                # The critical output: The assessment of how many points the opponent would win
+                # off of us given the current game state.
                 self.end_diff = tf.matmul(self.hidden, self.w2)
 
                 # This should be updated every time we advance the game.

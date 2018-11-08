@@ -14,8 +14,8 @@ player_1 = NNPlayer(training=True)
 plt.hist(player_1.graph.sess.run(player_1.graph.w1))
 plt.show()
 
-NUM_GAMES = 50
-LEARN_EVERY = 10
+NUM_GAMES = 500
+LEARN_EVERY = 50
 
 for i in range(NUM_GAMES):
     deck = Deck()
@@ -33,10 +33,3 @@ plt.hist(player_1.graph.sess.run(player_1.graph.w1))
 plt.show()
 
 player_1.graph.save_state(save_path=player_1_path)
-print('And now for the comparison:')
-for i in range(5):
-    deck = Deck()
-    goofy = Player()
-    smart = Greedy_Player()
-    karate = Game(deck, goofy, smart)
-    karate.play_game()

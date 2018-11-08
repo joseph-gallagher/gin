@@ -63,25 +63,38 @@ class Game:
                     if self.deck.knock:
                         print(self.deck.ending_player_melds)
 
-            self.deck.turn = self.deck.turn + 1
-
             # Check to see if the player has knocked, or if
             # the player has gin.
             if self.deck.knock:
                 if turn == 1:
                     pts = self.score_game(self.player_1, self.player_2)
+                    print('Player 1 knocks on turn {} with hand: '.format(self.deck.turn))
+                    print(self.player_1.hand)
+                    print('and melds: ')
+                    print(self.deck.ending_player_melds)
                     if pts >= 0:
                         print('Player 1 wins ' + str(pts) + ' points')
                     else:
                         print('Player 2 wins ' + str(pts) + ' points')
+
+                    print('as Player 2 has the hand')
+                    print(self.player_2.hand)
                 else:
                     pts = self.score_game(self.player_2, self.player_1)
+                    print('Player 2 knocks on turn {} with hand: '.format(self.deck.turn))
+                    print(self.player_2.hand)
+                    print('and melds: ')
+                    print(self.deck.ending_player_melds)
                     if pts >= 0:
                         print('Player 2 wins ' + str(pts) + ' points')
                     else:
                         print('Player 1 wins ' + str(pts) + ' points')
+                    print('as Player 1 has the hand')
+                    print(self.player_1.hand)
 
                 return
+
+        self.deck.turn = self.deck.turn + 1
 
         # You've gone through the entire deck, so you're done.
         print('No score for this game!')
@@ -121,28 +134,51 @@ class TrainingGame(Game):
                     if self.deck.knock:
                         print(self.deck.ending_player_melds)
 
-            self.deck.turn = self.deck.turn + 1
-
             # Check to see if the player has knocked, or if
             # the player has gin.
             if self.deck.knock:
                 if turn == 1:
                     pts = self.score_game(self.player_1, self.player_2)
-                    self.player_1.graph.end_game(pts)
+                    self.player_1.graph.end_game(-pts)
+                    # print('Player 1 knocks on turn {} with hand: '.format(self.deck.turn))
+                    # print(self.player_1.hand)
+                    # print('and melds: ')
+                    # print(self.deck.ending_player_melds)
                     if pts >= 0:
                         print('Player 1 wins ' + str(pts) + ' points')
                     else:
                         print('Player 2 wins ' + str(pts) + ' points')
+                    # print('as Player 2 has the hand')
+                    # print(self.player_2.hand)
                 else:
                     pts = self.score_game(self.player_2, self.player_1)
-                    self.player_1.graph.end_game(-pts)
+                    self.player_1.graph.end_game(pts)
+                    # print('Player 2 knocks on turn {} with hand: '.format(self.deck.turn))
+                    # print(self.player_2.hand)
+                    # print('and melds: ')
+                    # print(self.deck.ending_player_melds)
                     if pts >= 0:
                         print('Player 2 wins ' + str(pts) + ' points')
                     else:
                         print('Player 1 wins ' + str(pts) + ' points')
+                    # print('as Player 1 has the hand')
+                    # print(self.player_1.hand)
 
                 return
+
+            self.deck.turn = self.deck.turn + 1
 
         print('Exhausted deck, neither player knocked')
         pts = 0
         self.player_1.graph.end_game(pts)
+
+
+# Run a game and watch a stack trace:
+if __name__ == '__main__':
+
+    deck = Deck()
+    player_1 = Greedy_Player()
+    player_2 = Greedy_Player()
+    game = Game(deck, player_1, player_2)
+
+    game.play_game()

@@ -64,12 +64,54 @@ class ScoreTest(unittest.TestCase):
         self.assertEqual(-32, game.score_game(game.player_1, game.player_2))
 
 
-# class PlayTest(unittest.TestCase):
+class PlayTest(unittest.TestCase):
+
+    def setUp(self):
+        self.player_1 = Player()
+        self.player_2 = Greedy_Player()
+        self.deck = Deck()
+        self.game = Game(self.deck, self.player_1, self.player_2)
+
+    def tearDown(self):
+        self.player_1 = None
+        self.player_2 = None
+        self.deck = None
+
+    def test_end_hands(self):
+        self.game.play_game()
+        (a, b) = (len(self.game.player_1.hand), len(self.game.player_2.hand))
+        self.assertTupleEqual((10, 10), (a, b))
+
+    def test_recorded_melds(self):
+        self.game.play_game()
+        if self.game.deck.knock:
+            self.assertNotEqual([], self.game.deck.ending_player_melds)
+
+    def test_melds_are_legal(self):
+        self.game.play_game()
+        if self.game.deck.knock:
+            ending_player = self.deck.turn % 2
+            meld_cards = [card for meld in self.game.deck.ending_player_melds for card in meld]
+            if ending_player == 1:
+                ending_player_hand = self.game.player_1.hand
+            else:
+                ending_player_hand = self.game.player_2.hand
+            for card in meld_cards:
+                self.assertIn(card, ending_player_hand)
+
+    def test_meet_knock_crit(self):
+        self.game.play_game()
+        if self.game.deck.knock:
+            # The turn count determines who knocks
+            ending_player = self.deck.turn % 2
+            if ending_player == 1:
+                self.assertGreaterEqual(10, min_loose_points(self.game.player_1.hand)[0])
+            else:
+                self.assertGreaterEqual(10, min_loose_points(self.game.player_2.hand)[0])
 
 
 # class TrainTest(unittest.TestCase):
 
-    None
 
 if __name__ == '__main__':
     unittest.main()

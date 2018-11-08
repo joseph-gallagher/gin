@@ -138,7 +138,7 @@ class NNPlayer(Player):
             a = np.array(a)
             evaluation = self.graph.evaluate(a)
 
-            (best_w_disc, to_discard_w_disc) = max([(evaluation[d[discard]], discard) for discard in d],
+            (best_w_disc, to_discard_w_disc) = min([(evaluation[d[discard]], discard) for discard in d],
                                                    key=lambda x : x[0])
             '''    
             for card in cur_hand:
@@ -176,7 +176,7 @@ class NNPlayer(Player):
             a = np.array(a)
             evaluation = self.graph.evaluate(a)
 
-            (best_w_disc, to_discard_w_disc) = max([(evaluation[d[discard]], discard) for discard in d],
+            (best_w_disc, to_discard_w_disc) = min([(evaluation[d[discard]], discard) for discard in d],
                                                    key=lambda x: x[0])
 
             '''
@@ -236,7 +236,7 @@ class NNPlayer(Player):
             # Fill in strats_and_evals by looping again through possibilities:
             for card in d:
                 plays_and_evals = [(discard, evaluation[d[card][discard]]) for discard in d[card]]
-                (best_discard, eval_of_play) = max(plays_and_evals, key=lambda x: x[1])
+                (best_discard, eval_of_play) = min(plays_and_evals, key=lambda x: x[1])
                 strats_and_evals[card] = (best_discard, eval_of_play)
 
             '''
@@ -290,7 +290,7 @@ class NNPlayer(Player):
             # Fill in strats_and_evals by looping again through possibilities:
             for card in d:
                 plays_and_evals = [(discard, evaluation[d[card][discard]]) for discard in d[card]]
-                (best_discard, eval_of_play) = max(plays_and_evals, key=lambda x: x[1])
+                (best_discard, eval_of_play) = min(plays_and_evals, key=lambda x: x[1])
                 strats_and_evals[card] = (best_discard, eval_of_play)
 
             '''
@@ -330,7 +330,7 @@ class NNPlayer(Player):
         best_drawing = max(mean_draw, best_w_disc)
 
         # If no greener pastures, knock now:
-        if best_now > best_drawing:
+        if best_now < best_drawing:
             if min_loose_points(self.hand)[0] < 10:
                 # Have to write best_meld static method
                 optimal_meld = min_loose_points(self.hand)[1]

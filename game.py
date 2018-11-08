@@ -1,6 +1,7 @@
 from utils import *
 from players import *
 
+
 class Game:
 
     def __init__(self, deck, player_1, player_2):
@@ -11,33 +12,17 @@ class Game:
 
         self.deck.deal(self.player_1, self.player_2)
 
-    def has_gin(self, player):
-
-        hand = player.hand
-
-        if min_loose_points(hand)[0] == 0:
-            return True
-        else:
-            return False
-
     def score_game(self, ending_player, other_player):
 
         # If the ending player has gin, the calculation is easy.
-        if self.has_gin(ending_player):
-            loose = min_loose_points(other_player.hand)[0]
-            return 25 + loose
-
-        # Else, count the deadwood of ending_player
-        ep_hand = ending_player.hand[:]
-        for meld in self.deck.ending_player_melds:
-            for card in meld:
-                ep_hand.remove(card)
-        ep_deadwood = sum([value(card) for card in ep_hand])
+        ep_deadwood = min_loose_points(ending_player.hand)[0]
+        if ep_deadwood == 0:
+            op_deadwood = min_loose_points(other_player.hand)[0]
+            return 25 + op_deadwood
 
         # Find all the cards which can be laid off:
         droppable = layoffable(self.deck.ending_player_melds)
-        op_hand = other_player.hand[:]
-        op_must_meld = [card for card in op_hand if card not in droppable]
+        op_must_meld = [card for card in other_player.hand if card not in droppable]
         op_deadwood = inf
         for S in powerset(droppable):
             to_meld = op_must_meld[:]
@@ -50,7 +35,7 @@ class Game:
         if diff >= 0:
             return diff
         else:
-            return 25 - diff
+            return -25 + diff
 
     def play_game(self, trace=False):
 

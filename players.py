@@ -1,6 +1,7 @@
 from utils import *
 from simple_nn import SimpleGraph
 
+
 class Player:
 
     def __init__(self):
@@ -29,7 +30,7 @@ class Player:
         deck.knock = True
         return card
 
-    # A completely random play method:
+    # A completely random play method; never knocks.
     def play(self, deck):
 
         from_deck = choice([True, False])

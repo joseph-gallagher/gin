@@ -8,7 +8,7 @@ This code creates the TensorFlow code that generates the graph of a simple_nn pl
 
 class SimpleGraph(object):
 
-    def __init__(self, path=None, hidden_units=30, alpha=0.1, gamma=0.7):
+    def __init__(self, path=None, hidden_units=30, alpha=0.01, gamma=0.7):
 
         self.graph = tf.Graph()
         self.sess = tf.Session(graph=self.graph)

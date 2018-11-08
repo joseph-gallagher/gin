@@ -190,6 +190,7 @@ def min_loose_points(hand):
 
     return [current_best_deadwood, best_meld]
 
+
 def layoffable(melded_hand):
 
     """
@@ -253,6 +254,7 @@ class Deck:
         self.turn = 1
 
         self.knock = False
+        self.ending_player_melds = []
 
     def deal(self, player_1, player_2):
 

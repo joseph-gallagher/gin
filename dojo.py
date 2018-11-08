@@ -1,5 +1,7 @@
 # A very simple way to simulate a few games of 'gyeah' versus Greedy.
 from utils import *
+from game import *
+from players import *
 import os
 import matplotlib.pyplot as plt
 
@@ -8,7 +10,7 @@ hero = 'gyeah'
 player_1_path = os.path.join(current_dir, hero)
 player_1_path = os.path.join(player_1_path, hero)
 
-player_1 = NNPlayer(path=player_1_path, training=True)
+player_1 = NNPlayer(training=True)
 plt.hist(player_1.graph.sess.run(player_1.graph.w1))
 plt.show()
 

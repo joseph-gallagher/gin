@@ -2,7 +2,7 @@
 
 A slow-burn project inspired by Arthur Samuel's self-taught checkers player and Gerard Tesauro's TD-Gammon, a self-taught
 backgammon player. The goal is to train a neural net to gain proficiency playing the card game gin using the temporal-difference algorithm 
-(as explicated [here]()).
+(as explicated [here](https://web.stanford.edu/group/pdplab/pdphandbook/handbookch10.html)).
 
 ## Rules of gin
 

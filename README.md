@@ -30,11 +30,17 @@ opposing player.
 
 ## Current layout
 
-utils.py - Implementation of essential scoring/card type mechanics, as well as a Deck class.
-players.py - Various player classes, including a simple greedy player and the neural net player.
-game.py - A class for building games (currently missing a console-interactive game)
-simplenn.py - The TensorFlow graph architecture that sits inside the NNPlayer class as it's engine.
-dojo.py - 'I know kung fu' - 'Show me' - a command-line utility for training a simple NNPlayer over various games.
+* utils.py - Implementation of essential scoring/card type mechanics, as well as a Deck class.
+* players.py - Various player classes, including a simple greedy player and the neural net player.
+* game.py - A class for building games (currently missing a console-interactive game)
+* simplenn.py - The TensorFlow graph architecture that sits inside the NNPlayer class as it's engine.
+* dojo.py - 'I know kung fu' - 'Show me' - a command-line utility for training a simple NNPlayer over various games.
+* main.py - A yet-not-implemented command line interface supporting training various players, assessing statistics.
+
+## Planned improvements
+
+* Wrapping the TD-lambda algorithm into a single TensorFlow Operation for use across variable neural-net architectures
+* Experimenting with different embeddings of the game state.
 
 
 
